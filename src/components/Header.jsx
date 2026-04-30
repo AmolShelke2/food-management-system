@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, LogOut, Settings } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/authSlice';
-import CartDropdown from './CartDropdown';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart, Menu, X, LogOut, Settings } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/authSlice";
+import CartDropdown from "./CartDropdown";
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const cartItems = useSelector(state => state.cart.items);
-  const { isAuthenticated } = useSelector(state => state.auth);
+  const cartItems = useSelector((state) => state.cart.items);
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    navigate("/");
   };
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -35,37 +35,44 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-gray-700 hover:text-primary font-medium">
-              Home
-            </Link>
-            <Link to="/menu" className="text-gray-700 hover:text-primary font-medium">
-              Menu
-            </Link>
-            {isAuthenticated && (
-              <Link to="/admin" className="text-gray-700 hover:text-primary font-medium">
-                Admin
+          {!isAuthenticated && (
+            <nav className="hidden md:flex items-center gap-8">
+              <Link
+                to="/"
+                className="text-gray-700 hover:text-primary font-medium"
+              >
+                Home
               </Link>
-            )}
-          </nav>
+              <Link
+                to="/menu"
+                className="text-gray-700 hover:text-primary font-medium"
+              >
+                Menu
+              </Link>
+            </nav>
+          )}
 
           {/* Right Side Items */}
           <div className="flex items-center gap-4">
             {/* Cart Icon */}
-            <div className="relative">
-              <button
-                onClick={() => setCartOpen(!cartOpen)}
-                className="relative p-2 text-gray-700 hover:text-primary transition"
-              >
-                <ShoppingCart size={24} />
-                {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
+            {!isAuthenticated && (
+              <div className="relative">
+                <button
+                  onClick={() => setCartOpen(!cartOpen)}
+                  className="relative p-2 text-gray-700 hover:text-primary transition"
+                >
+                  <ShoppingCart size={24} />
+                  {cartCount > 0 && (
+                    <span className="absolute top-0 right-0 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+                {cartOpen && (
+                  <CartDropdown onClose={() => setCartOpen(false)} />
                 )}
-              </button>
-              {cartOpen && <CartDropdown onClose={() => setCartOpen(false)} />}
-            </div>
+              </div>
+            )}
 
             {/* Admin/Login */}
             {isAuthenticated ? (
@@ -108,20 +115,24 @@ export const Header = () => {
         {mobileMenuOpen && (
           <div className="md:hidden pb-4 border-t">
             <div className="flex flex-col gap-2 pt-4">
-              <Link
-                to="/"
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                to="/menu"
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Menu
-              </Link>
+              {!isAuthenticated && (
+                <>
+                  <Link
+                    to="/"
+                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/menu"
+                    className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Menu
+                  </Link>
+                </>
+              )}
               {isAuthenticated ? (
                 <>
                   <Link
